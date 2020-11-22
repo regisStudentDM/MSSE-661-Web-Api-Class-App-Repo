@@ -1,5 +1,6 @@
 const mysql = require('mysql');
-const queries = require('./queries/material.queries');
+const materialqueries = require('./queries/material.queries');
+const authqueries = require('./queries/auth.queries');
 
 // Get the Host from Environment or use default
 const host = process.env.DB_HOST || 'localhost';
@@ -26,10 +27,17 @@ con.connect(function(err) {
   if (err) throw err;
   console.log('Connected!');
 
-  con.query(queries.CREATE_PARTS_TABLE, function(err, result) {
+  con.query(materialqueries.CREATE_PARTS_TABLE, function(err, result) {
     if (err) throw err;
     console.log('Parts Table Created or exists already!');
   });
+
+  con.query(authqueries.CREATE_USERS_TABLE, function(err, result) {
+    if (err) throw err;
+    console.log('Users Table Created or exists already!');
+  });
+
+
 });
 
 module.exports = con;

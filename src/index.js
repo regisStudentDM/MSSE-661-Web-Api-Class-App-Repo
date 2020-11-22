@@ -2,6 +2,8 @@ const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const authRoutes = require('./routes/auth.routes');
+const userRoutes = require('./routes/user.routes');
 const materialRoutes = require('./routes/material.routes');
 const middleware = require('./middleware/errors.middleware');
 
@@ -20,9 +22,11 @@ app.use(cors());
 // ROUTE-HANDLING MIDDLEWARE FUNCTIONS
 // ************************************
 
-// Handle routes for material.
-app.use('/material', materialRoutes); // http://localhost:3000/material
-// app.use('/users', usersRoutes); // http://localhost:3000/users
+// Partial API endpoints
+app.use('/api/auth', authRoutes); // http://localhost:3000/api/auth
+app.use('/api/user', userRoutes); // http://localhost:3000/api/user
+app.use('/api/material', materialRoutes); // http://localhost:3000/api/material
+
 
 // Handle 404 requests
 app.use(middleware.error404); // http://loaclhost:3000/users
