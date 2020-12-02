@@ -10,13 +10,17 @@ const {
   generateRefreshToken,
 } = require('../src/utils/jwt-helpers');
 
-const token = generateAccessToken(1, {
-  // {id: 1, iat: wlenfwekl, expiredIn: 9174323 }
-  expiresIn: 86400,
-});
 
 describe('Tasks API Service', function () {
-  it.skip('should GET all tasks', function (done) {
+  it.skip('should GET all tasks for given user id', function (done) {
+    
+    request_user_id = 2;
+
+    const token = generateAccessToken(request_user_id, {
+      // {id: 1, iat: wlenfwekl, expiredIn: 9174323 }
+      expiresIn: 86400,
+    });
+    
     chai
       .request('http://localhost:3000')
       .get('/api/tasks')
@@ -24,24 +28,34 @@ describe('Tasks API Service', function () {
       .end(function (err, resp) {
         expect(resp.status).to.be.eql(200);
         expect(resp.body).to.be.a('array');
-        expect(resp.body.length).to.not.be.eql(0);
+        expect(resp.body.length).to.be.eql(1);
         done();
       });
   });
 
-  it.skip('should GET a single task', function (done) {
+  it.skip('should GET a single task for a given user', function (done) {
+    request_user_id = 2;
+    request_task_id = 3;
+
+    const token = generateAccessToken(request_user_id, {
+      // {id: 1, iat: wlenfwekl, expiredIn: 9174323 }
+      expiresIn: 86400,
+    });
+    
+    
     const expected = [
       {
-        id: 2,
-        name: "New test task!",
-        created_date: '2020-11-29T09:30:18.000Z',
-        status: 'pending',
+        user_id: 2,
+        task_id: 3,
+        task_name: "Updated test task!",
+        created_date: '2020-12-02T22:17:08.000Z',
+        status: 'updated',
       },
     ];
 
     chai
       .request('http://localhost:3000')
-      .get('/api/tasks/2')
+      .get('/api/tasks/' + request_task_id)
       .set('Authorization', `Bearer ${token}`)
       .end(function (err, resp) {
         expect(resp.status).to.be.eql(200);
@@ -52,11 +66,20 @@ describe('Tasks API Service', function () {
       });
   });
 
-  it.skip('should POST a single task', function (done) {
+  it.skip('should POST a single task for a given user', function (done) {
+        
+    request_user_id = 2;
+
+    const token = generateAccessToken(request_user_id, {
+      // {id: 1, iat: wlenfwekl, expiredIn: 9174323 }
+      expiresIn: 86400,
+    });
+    
+    
     const newTask = {
-      name: 'New test task!',
+      task_name: "New test task!",
     };
-    const expected = { message: 'Added task successfully!' };
+    const expected = { msg: 'Added task successfully!' };
 
     chai
       .request('http://localhost:3000')
@@ -69,4 +92,52 @@ describe('Tasks API Service', function () {
         done();
       });
   });
+
+  it.skip('should PUT a single task for a given user', function (done) {
+    request_user_id = 2;
+    request_task_id = 4;
+
+    const token = generateAccessToken(request_user_id, {
+      // {id: 1, iat: wlenfwekl, expiredIn: 9174323 }
+      expiresIn: 86400,
+    });
+    
+    const updated_Task_props = {
+      task_name: "Updated test task!",
+      status: 'updated'
+    };
+    
+    chai
+      .request('http://localhost:3000')
+      .put('/api/tasks/' + request_task_id)
+      .set('Authorization', `Bearer ${token}`)
+      .send(updated_Task_props)
+      .end(function (err, resp) {
+        expect(resp.status).to.be.eql(200);
+        expect(resp.body.affectedRows).to.be.eql(1);
+        done();
+      });
+  });
+
+  it.skip('should DELETE a single task for a given user', function (done) {
+    request_user_id = 2;
+    request_task_id = 10;
+    const token = generateAccessToken(request_user_id, {
+      // {id: 1, iat: wlenfwekl, expiredIn: 9174323 }
+      expiresIn: 86400,
+    });
+    
+    const expected = { msg: 'Deleted successfully.' };
+
+    chai
+      .request('http://localhost:3000')
+      .delete('/api/tasks/' + request_task_id)
+      .set('Authorization', `Bearer ${token}`)
+      .end(function (err, resp) {
+        expect(resp.status).to.be.eql(200);
+        expect(resp.body).to.be.eql(expected);
+        done();
+      });
+  });
+
 });
