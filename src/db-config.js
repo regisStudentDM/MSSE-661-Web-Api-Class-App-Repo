@@ -1,6 +1,7 @@
 const mysql = require('mysql');
-const materialqueries = require('./queries/material.queries');
-const authqueries = require('./queries/auth.queries');
+const { CREATE_USERS_TABLE } = require('./queries/user.queries');
+const { CREATE_TASKS_TABLE } = require('./queries/tasks.queries');
+const query = require('./utils/query');
 
 // Get the Host from Environment or use default
 const host = process.env.DB_HOST || 'localhost';
@@ -12,32 +13,48 @@ const user = process.env.DB_USER || 'root';
 const password = process.env.DB_PASS || 'password';
 
 // Get the Database from Environment or use default
-const database = process.env.DB_DATABASE || 'parts_and_assemblies';
+const database = process.env.DB_DATABASE || 'tododb';
+
+const connection = async () =>
+  new Promise((resolve, reject) => {
+    const con = mysql.createConnection({
+      host,
+      user,
+      password,
+      database,
+    });
+
+    con.connect((err) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+    });
+
+    resolve(con);
+  });
 
 // Create the connection with required details
-const con = mysql.createConnection({
-  host,
-  user,
-  password,
-  database
-});
-
-// Connect to the database.
-con.connect(function(err) {
-  if (err) throw err;
-  console.log('Connected!');
-
-  con.query(materialqueries.CREATE_PARTS_TABLE, function(err, result) {
-    if (err) throw err;
-    console.log('Parts Table Created or exists already!');
+(async () => {
+  const _con = await connection().catch((err) => {
+    throw err;
   });
 
-  con.query(authqueries.CREATE_USERS_TABLE, function(err, result) {
-    if (err) throw err;
-    console.log('Users Table Created or exists already!');
-  });
+  const userTableCreated = await query(_con, CREATE_USERS_TABLE).catch(
+    (err) => {
+      console.log(err);
+    }
+  );
 
+  const tasksTableCreated = await query(_con, CREATE_TASKS_TABLE).catch(
+    (err) => {
+      console.log(err);
+    }
+  );
 
-});
+  if (!!userTableCreated && !!tasksTableCreated) {
+    console.log('Tables Created!');
+  }
+})();
 
-module.exports = con;
+module.exports = connection;
