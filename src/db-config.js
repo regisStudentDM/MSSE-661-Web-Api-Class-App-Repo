@@ -51,7 +51,8 @@ const connection = async () =>
       console.log(err);
     }
   );
-
+  
+  //Coerce into a boolean
   if (!!userTableCreated && !!tasksTableCreated) {
     console.log('Tables Created!');
   }
