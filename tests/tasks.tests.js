@@ -28,7 +28,7 @@ describe('Tasks API Service', function () {
       .end(function (err, resp) {
         expect(resp.status).to.be.eql(200);
         expect(resp.body).to.be.a('array');
-        expect(resp.body.length).to.be.eql(1);
+        expect(resp.body.length).to.be.eql(4);
         done();
       });
   });

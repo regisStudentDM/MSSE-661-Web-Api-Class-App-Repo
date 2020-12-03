@@ -20,9 +20,7 @@ exports.getMe = async (req, res) => {
     });
 
     const user = await query(con, GET_ME_BY_USER_ID, [req.body[0].user_id]).catch(
-      (err) => {
-        res.status(500).send({ msg: 'Could not find the user.' });
-      }
+      serverError(res)
     );
 
     if (!user.length) {

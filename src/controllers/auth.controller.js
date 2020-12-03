@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-
+const mysql = require('mysql');
 const connection = require('../db-config');
 const {
   GET_ME_BY_USERNAME,
@@ -12,39 +12,40 @@ const {
   generateAccessToken,
   generateRefreshToken,
 } = require('../utils/jwt-helpers');
+const { serverError } = require('../utils/handlers');
+
+
 
 exports.register = async (req, res) => {
   // params setup
   const passwordHash = bcrypt.hashSync(req.body.password);
-  const params = [req.body.username, req.body.email, passwordHash];
-
+  
   // establish a connection
   const con = await connection().catch((err) => {
     throw err;
   });
 
-  // check for existing user first
-  const user = await query(con, GET_ME_BY_USERNAME, [req.body.username]).catch(
-    (err) => {
-      res.status(500);
-      res.send({ msg: 'Could not retrieve user.' });
-    }
+  username = mysql.escape(req.body.username);
+  uEmail = mysql.escape(req.body.email);
+  pWord = mysql.escape(passwordHash);
+
+  // query all tasks
+  const user = await query(con, GET_ME_BY_USERNAME(username)).catch(
+    serverError(res)
   );
 
   // if we get one result back
   if (user.length === 1) {
-    res.status(403).send({ msg: 'User already exists!' });
+    res.status(403).json({ msg: 'User already exists!' });
   } else {
     // add new user
-    const result = await query(con, INSERT_NEW_USER, params).catch((err) => {
-      //   stop registeration
-      res
-        .status(500)
-        .send({ msg: 'Could not register user. Please try again later.' });
-    });
+    const result = await query(con, 
+      INSERT_NEW_USER(username, uEmail, pWord)).catch(
+      serverError(res)
+    );
 
     if(result.affectedRows) {
-      res.send({ msg: 'New user created!' });
+      res.json({ msg: 'New user created!' });
     }
   }
 };
@@ -56,12 +57,10 @@ exports.login = async (req, res) => {
   });
 
   // check for existing user first
-  const user = await query(con, GET_ME_BY_USERNAME_WITH_PASSWORD, [
-    req.body.username,
-  ]).catch((err) => {
-    res.status(500);
-    res.send({ msg: 'Could not retrieve user.' });
-  });
+  uName = mysql.escape(req.body.username);
+  const user = await query(con, GET_ME_BY_USERNAME_WITH_PASSWORD(uName)).catch(
+    serverError(res)
+  );
 
   // if the user exists
   if (user.length === 1) {
@@ -73,7 +72,7 @@ exports.login = async (req, res) => {
       });
 
     if (!validPass) {
-      res.status(400).send({ msg: 'Invalid password!' });
+      res.status(400).json({ msg: 'Invalid password!' });
     }
     // create token
     const accessToken = generateAccessToken(user[0].user_id, {
@@ -88,7 +87,7 @@ exports.login = async (req, res) => {
 
     res
       .header('access_token', accessToken) // ex.: { 'auth-token': 'lksnenha0en4tnoaeiwnlgn3o4i'}
-      .send({
+      .json({
         auth: true,
         msg: 'Logged in!',
         token_type: 'bearer',
@@ -106,12 +105,12 @@ exports.token = (req, res) => {
   if (!refreshToken) {
     res
       .status(401)
-      .send({ auth: false, msg: 'Access Denied. No token provided.' });
+      .json({ auth: false, msg: 'Access Denied. No token provided.' });
   }
 
   // stop refresh is refresh token invalid
   if (!refreshTokens.includes(refreshToken)) {
-    res.status(403).send({ msg: 'Invalid Refresh Token' });
+    res.status(403).json({ msg: 'Invalid Refresh Token' });
   }
 
   const verified = verifyToken(refreshToken, jwtconfig.refresh, req, res);
@@ -120,7 +119,7 @@ exports.token = (req, res) => {
     const accessToken = generateAccessToken(user[0].user_id, { expiresIn: 86400 });
     res
       .header('access_token', accessToken) // ex.: { 'auth-token': 'lksnenha0en4tnoaeiwnlgn3o4i'}
-      .send({
+      .json({
         auth: true,
         msg: 'Logged in!',
         token_type: 'bearer',
@@ -129,12 +128,12 @@ exports.token = (req, res) => {
         refresh_token: refreshToken,
       });
   }
-  res.status(403).send({ msg: 'Invalid Token' });
+  res.status(403).json({ msg: 'Invalid Token' });
 };
 
 exports.logout = (req, res) => {
   const refreshToken = req.body.token;
   refreshTokens = refreshTokens.filter((t) => t !== refreshToken);
 
-  res.send({ msg: 'Logout successful' });
+  res.json({ msg: 'Logout successful' });
 };

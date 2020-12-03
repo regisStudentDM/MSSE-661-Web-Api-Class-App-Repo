@@ -26,7 +26,7 @@ exports.getAllTasks = async (req, res) => {
   });
 
   // query all tasks
-  const tasks = await query(con, ALL_TASKS(req.user.id), []).catch(
+  const tasks = await query(con, ALL_TASKS(req.user.id)).catch(
     serverError(res)
   );
 
