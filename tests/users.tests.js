@@ -65,7 +65,7 @@ describe('User API service', () => {
       });
   });
 
-  it('should attempt to PUT updated credentials for a logged in user and return that nothing needs updating', (done) => {
+  it.skip('should attempt to PUT updated credentials for a logged in user and return that nothing needs updating', (done) => {
     request_user_id = 5;
 
     const token = generateAccessToken(request_user_id, {

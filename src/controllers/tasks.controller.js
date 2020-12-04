@@ -76,7 +76,8 @@ exports.createTask = async (req, res) => {
 
     // query add task
     const taskName = mysql.escape(req.body.task_name);
-    const result = await query(con, INSERT_TASK(user.id, taskName)).catch(
+    const taskStatus = mysql.escape(req.body.status);
+    const result = await query(con, INSERT_TASK(user.id, taskName, taskStatus)).catch(
       serverError(res)
     );
 

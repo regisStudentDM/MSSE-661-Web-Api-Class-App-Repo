@@ -41,8 +41,8 @@ exports.SINGLE_TASK = (userId, taskId) =>
  * - column names match the order the are in the table
  * - `?` allow us to use params in our controllers
  */
-exports.INSERT_TASK = (userId, taskName) =>
-  `INSERT INTO tasks (user_id, task_name) VALUES (${userId}, ${taskName})`;
+exports.INSERT_TASK = (userId, taskName, stat) =>
+  `INSERT INTO tasks (user_id, task_name, status) VALUES (${userId}, ${taskName}, ${stat})`;
 
 /**
  * Update follows syntax:

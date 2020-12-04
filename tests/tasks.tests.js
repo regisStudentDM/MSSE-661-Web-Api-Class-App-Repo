@@ -78,6 +78,7 @@ describe('Tasks API Service', function () {
     
     const newTask = {
       task_name: "New test task!",
+      status: "completed",
     };
     const expected = { msg: 'Added task successfully!' };
 
@@ -121,7 +122,7 @@ describe('Tasks API Service', function () {
 
   it.skip('should DELETE a single task for a given user', function (done) {
     request_user_id = 2;
-    request_task_id = 10;
+    request_task_id = 9;
     const token = generateAccessToken(request_user_id, {
       // {id: 1, iat: wlenfwekl, expiredIn: 9174323 }
       expiresIn: 86400,
