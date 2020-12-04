@@ -66,6 +66,32 @@ describe('Tasks API Service', function () {
       });
   });
 
+  it.skip('should GET a single task ID for a given user with a given task name', function (done) {
+    request_user_id = 1;
+    request_task_name = "task1-user1";
+
+    const token = generateAccessToken(request_user_id, {
+      // {id: 1, iat: wlenfwekl, expiredIn: 9174323 }
+      expiresIn: 86400,
+    });
+
+    const expected =
+    {
+      task_id: 26,
+    };
+
+    chai
+      .request('http://localhost:3000')
+      .get('/api/tasks/getTaskIdByName/' + request_task_name)
+      .set('Authorization', `Bearer ${token}`)
+      .end(function (err, resp) {
+        expect(resp.status).to.be.eql(200);
+        expect(resp.body.length).to.not.be.eql(0);
+        expect(resp.body[0]).to.be.eql(expected);
+        done();
+      });
+  });
+
   it.skip('should POST a single task for a given user', function (done) {
         
     request_user_id = 2;
@@ -97,6 +123,7 @@ describe('Tasks API Service', function () {
   it.skip('should PUT a single task for a given user', function (done) {
     request_user_id = 2;
     request_task_id = 4;
+    getTaskIDByUserAndTaskName
 
     const token = generateAccessToken(request_user_id, {
       // {id: 1, iat: wlenfwekl, expiredIn: 9174323 }

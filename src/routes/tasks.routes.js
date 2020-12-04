@@ -1,6 +1,7 @@
 const express = require('express');
 const {
   getAllTasks,
+  getTaskIdByName,
   createTask,
   getTask,
   updateTask,
@@ -19,6 +20,8 @@ const tasksRoutes = express.Router();
  * Routes for all tasks. Evaluates to `/tasks/`.
  */
 tasksRoutes.get('/', canAccess, getAllTasks);
+tasksRoutes.get('/getTaskIdByName/:taskName', canAccess, getTaskIdByName);
+
 tasksRoutes.post('/', canAccess, createTask);
 
 /**

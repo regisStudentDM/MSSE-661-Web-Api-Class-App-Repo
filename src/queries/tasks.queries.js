@@ -22,7 +22,8 @@ exports.CREATE_TASKS_TABLE = `CREATE TABLE IF NOT EXISTS tasks(
   PRIMARY KEY (task_id),
   FOREIGN KEY (user_id) REFERENCES users(user_id)
         ON UPDATE CASCADE
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+  UNIQUE KEY (user_id, task_name)
 )`;
 
 // Get every task
@@ -32,6 +33,9 @@ exports.ALL_TASKS = (userId) => `SELECT * FROM tasks WHERE user_id = ${userId}`;
 exports.SINGLE_TASK = (userId, taskId) =>
   `SELECT * FROM tasks WHERE user_id = ${userId} AND task_id = ${taskId}`;
 
+  exports.TASK_ID_BY_USER_ID_AND_NAME = (userId, taskName) =>
+  `SELECT task_id FROM tasks WHERE user_id = ${userId} AND task_name = ${taskName}`;
+  
 /**
  * Insert follows syntax:
  * - INSERT INTO <table_name>(<col_name1>, <col_name3>, <col_name3>, ...)

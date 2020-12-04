@@ -3,6 +3,7 @@ const connection = require('../db-config');
 const {
   ALL_TASKS,
   SINGLE_TASK,
+  TASK_ID_BY_USER_ID_AND_NAME,
   INSERT_TASK,
   UPDATE_TASK,
   DELETE_TASK,
@@ -56,8 +57,34 @@ exports.getTask = async (req, res) => {
   if (!task.length) {
     res.status(400).json({ msg: 'No tasks available for this user.' });
   }
-  res.json(task);
+  else{
+    res.json(task);
+  }
 };
+
+// http://localhost:3000/getTaskIdByName/:taskName
+exports.getTaskIdByName = async (req, res) => {
+  // establish connection
+  const con = await connection().catch((err) => {
+    throw err;
+  });
+
+  const taskName = mysql.escape(req.params.taskName);
+
+  // query all task
+  const retrievedID = await query(
+    con,
+    TASK_ID_BY_USER_ID_AND_NAME(req.user.id, taskName)
+  ).catch(serverError(res));
+
+  if (!retrievedID) {
+    res.status(500).json({ msg: 'Could not find task with that name, for this user.' });
+  }
+  else{
+    res.json(retrievedID);
+  }
+};
+
 
 // http://localhost:3000/tasks
 /**
@@ -84,13 +111,23 @@ exports.createTask = async (req, res) => {
       serverError(res)
     );
 
-    if (result.affectedRows !== 1) {
-      res
-        .status(500)
-        .json({ msg: `Unable to add task: ${req.body.task_name}` });
+    if(result){
+      if (result.affectedRows !== 1) {
+        res
+          .status(500)
+          .json({ msg: `Unable to add task: ${req.body.task_name}` });
+      }
+      else{
+        res.json({ msg: 'Added task successfully!' });
+      }    
     }
-    res.json({ msg: 'Added task successfully!' });
   }
+  else{
+    res
+    .status(500)
+    .json({ msg: `Do not have permission to add this task: ${req.body.task_name}` });
+  }
+
 };
 
 /**
@@ -132,13 +169,17 @@ exports.updateTask = async (req, res) => {
     con,
     UPDATE_TASK(req.user.id, req.params.taskId, values)
   ).catch(serverError(res));
-
-  if (result.affectedRows !== 1) {
-    res
-      .status(500)
-      .json({ msg: `Unable to update task: '${req.body.task_name}'` });
+  
+  if (result){
+    if (result.affectedRows !== 1) {
+      res
+        .status(500)
+        .json({ msg: `Unable to update task: '${req.body.task_name}'` });
+        return;
+    }
+    res.json(result);  
   }
-  res.json(result);
+
 };
 
 // http://localhost:3000/tasks/1
