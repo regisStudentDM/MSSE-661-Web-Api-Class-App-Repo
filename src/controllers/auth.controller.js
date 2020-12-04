@@ -72,10 +72,12 @@ exports.login = async (req, res) => {
       .compare(req.body.password, user[0].password)
       .catch((err) => {
         res.json(500).json({ msg: 'Invalid password!' });
+        return;
       });
 
     if (!validPass) {
       res.status(400).json({ msg: 'Invalid password!' });
+      return;
     }
     // create token
     const accessToken = generateAccessToken(user[0].user_id, {

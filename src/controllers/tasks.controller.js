@@ -32,9 +32,12 @@ exports.getAllTasks = async (req, res) => {
 
   // [] === true, 0 === false
   if (!tasks.length) {
-    res.status(200).json({ msg: 'No tasks available for this user.' });
+    res.status(200);
+    res.json({ msg: 'No tasks available for this user.' });
   }
-  res.json(tasks);
+  else{
+    res.json(tasks);
+  }
 };
 
 // http://localhost:3000/tasks/:taskId
