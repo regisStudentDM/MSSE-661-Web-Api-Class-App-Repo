@@ -14,7 +14,7 @@ const {
 describe('Parts API Service', function () {
   it.skip('should GET all parts for given user id', function (done) {
     
-    request_user_id = 2;
+    request_user_id = 1;
 
     const token = generateAccessToken(request_user_id, {
       // {id: 1, iat: wlenfwekl, expiredIn: 9174323 }
@@ -28,7 +28,7 @@ describe('Parts API Service', function () {
       .end(function (err, resp) {
         expect(resp.status).to.be.eql(200);
         expect(resp.body).to.be.a('array');
-        expect(resp.body.length).to.be.eql(4);
+        expect(resp.body.length).to.be.eql(2);
         done();
       });
   });
@@ -47,8 +47,8 @@ describe('Parts API Service', function () {
       {
         user_id: 2,
         part_id: 3,
-        part_name: "Test Part!",
-        part_unit: 'EACH',
+        part_name: "part 1 part for user 2",
+        part_unit: 'tubes',
       },
     ];
 
@@ -66,8 +66,8 @@ describe('Parts API Service', function () {
   });
 
   it.skip('should GET a single part ID for a given user with a given part name', function (done) {
-    request_user_id = 1;
-    request_part_name = "part1-user1";
+    request_user_id = 2;
+    request_part_name = "part 1 part for user 2";
 
     const token = generateAccessToken(request_user_id, {
       // {id: 1, iat: wlenfwekl, expiredIn: 9174323 }
@@ -76,7 +76,7 @@ describe('Parts API Service', function () {
 
     const expected =
     {
-      part_id: 26,
+      part_id: 3,
     };
 
     chai
@@ -93,7 +93,7 @@ describe('Parts API Service', function () {
 
   it.skip('should POST a single part for a given user', function (done) {
         
-    request_user_id = 1;
+    request_user_id = 2;
 
     const token = generateAccessToken(request_user_id, {
       // {id: 1, iat: wlenfwekl, expiredIn: 9174323 }
@@ -102,8 +102,8 @@ describe('Parts API Service', function () {
     
     
     const newPart = {
-      part_name: "other part for user 1",
-      part_unit: "boxes",
+      part_name: "part 2 part for user 2",
+      part_unit: "feet",
     };
     const expected = { msg: 'Added part successfully!' };
 
@@ -119,7 +119,7 @@ describe('Parts API Service', function () {
       });
   });
 
-  it('should PUT a single part for a given user', function (done) {
+  it.skip('should PUT a single part for a given user', function (done) {
     request_user_id = 2;
     request_part_id = 4;
 
@@ -147,7 +147,7 @@ describe('Parts API Service', function () {
 
   it.skip('should DELETE a single part for a given user', function (done) {
     request_user_id = 2;
-    request_part_id = 9;
+    request_part_id = 4;
     const token = generateAccessToken(request_user_id, {
       // {id: 1, iat: wlenfwekl, expiredIn: 9174323 }
       expiresIn: 86400,

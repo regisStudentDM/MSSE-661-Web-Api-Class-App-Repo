@@ -8,9 +8,9 @@ describe('Auth API service', () => {
   // run one time then skip once working
   it.skip('should POST a new user (register)', (done) => {
     const testUser = {
-      username: 'admin 4 with extra 4',
-      password: 'p4',
-      email: 'admin3@example.com',
+      username: 'admin2',
+      password: 'pass2',
+      email: 'admin2@example.com',
     };
     const expected = { msg: 'New user created!' };
 
