@@ -11,10 +11,10 @@ const {
 } = require('../src/utils/jwt-helpers');
 
 
-describe('Tasks API Service', function () {
-  it.skip('should GET all tasks for given user id', function (done) {
+describe('Parts API Service', function () {
+  it.skip('should GET all parts for given user id', function (done) {
     
-    request_user_id = 2;
+    request_user_id = 1;
 
     const token = generateAccessToken(request_user_id, {
       // {id: 1, iat: wlenfwekl, expiredIn: 9174323 }
@@ -23,19 +23,19 @@ describe('Tasks API Service', function () {
     
     chai
       .request('http://localhost:3000')
-      .get('/api/tasks')
+      .get('/api/parts')
       .set('Authorization', `Bearer ${token}`)
       .end(function (err, resp) {
         expect(resp.status).to.be.eql(200);
         expect(resp.body).to.be.a('array');
-        expect(resp.body.length).to.be.eql(4);
+        expect(resp.body.length).to.be.eql(2);
         done();
       });
   });
 
-  it.skip('should GET a single task for a given user', function (done) {
+  it.skip('should GET a single part for a given user', function (done) {
     request_user_id = 2;
-    request_task_id = 3;
+    request_part_id = 3;
 
     const token = generateAccessToken(request_user_id, {
       // {id: 1, iat: wlenfwekl, expiredIn: 9174323 }
@@ -46,16 +46,15 @@ describe('Tasks API Service', function () {
     const expected = [
       {
         user_id: 2,
-        task_id: 3,
-        task_name: "Updated test task!",
-        created_date: '2020-12-02T22:17:08.000Z',
-        status: 'updated',
+        part_id: 3,
+        part_name: "part 1 part for user 2",
+        part_unit: 'tubes',
       },
     ];
 
     chai
       .request('http://localhost:3000')
-      .get('/api/tasks/' + request_task_id)
+      .get('/api/parts/' + request_part_id)
       .set('Authorization', `Bearer ${token}`)
       .end(function (err, resp) {
         expect(resp.status).to.be.eql(200);
@@ -66,9 +65,9 @@ describe('Tasks API Service', function () {
       });
   });
 
-  it.skip('should GET a single task ID for a given user with a given task name', function (done) {
-    request_user_id = 1;
-    request_task_name = "task1-user1";
+  it.skip('should GET a single part ID for a given user with a given part name', function (done) {
+    request_user_id = 2;
+    request_part_name = "part 1 part for user 2";
 
     const token = generateAccessToken(request_user_id, {
       // {id: 1, iat: wlenfwekl, expiredIn: 9174323 }
@@ -77,12 +76,12 @@ describe('Tasks API Service', function () {
 
     const expected =
     {
-      task_id: 26,
+      part_id: 3,
     };
 
     chai
       .request('http://localhost:3000')
-      .get('/api/tasks/getTaskIdByName/' + request_task_name)
+      .get('/api/parts/getPartIdByName/' + request_part_name)
       .set('Authorization', `Bearer ${token}`)
       .end(function (err, resp) {
         expect(resp.status).to.be.eql(200);
@@ -92,7 +91,7 @@ describe('Tasks API Service', function () {
       });
   });
 
-  it.skip('should POST a single task for a given user', function (done) {
+  it.skip('should POST a single part for a given user', function (done) {
         
     request_user_id = 2;
 
@@ -102,17 +101,17 @@ describe('Tasks API Service', function () {
     });
     
     
-    const newTask = {
-      task_name: "New test task!",
-      status: "completed",
+    const newPart = {
+      part_name: "part 2 part for user 2",
+      part_unit: "feet",
     };
-    const expected = { msg: 'Added task successfully!' };
+    const expected = { msg: 'Added part successfully!' };
 
     chai
       .request('http://localhost:3000')
-      .post('/api/tasks')
+      .post('/api/parts')
       .set('Authorization', `Bearer ${token}`)
-      .send(newTask)
+      .send(newPart)
       .end(function (err, resp) {
         expect(resp.status).to.be.eql(200);
         expect(resp.body).to.be.eql(expected);
@@ -120,26 +119,25 @@ describe('Tasks API Service', function () {
       });
   });
 
-  it.skip('should PUT a single task for a given user', function (done) {
+  it.skip('should PUT a single part for a given user', function (done) {
     request_user_id = 2;
-    request_task_id = 4;
-    getTaskIDByUserAndTaskName
+    request_part_id = 4;
 
     const token = generateAccessToken(request_user_id, {
       // {id: 1, iat: wlenfwekl, expiredIn: 9174323 }
       expiresIn: 86400,
     });
     
-    const updated_Task_props = {
-      task_name: "Updated test task!",
-      status: 'updated'
+    const updated_Part_props = {
+      part_name: "Updated test part!",
+      part_unit: 'updated part unit!'
     };
     
     chai
       .request('http://localhost:3000')
-      .put('/api/tasks/' + request_task_id)
+      .put('/api/parts/' + request_part_id)
       .set('Authorization', `Bearer ${token}`)
-      .send(updated_Task_props)
+      .send(updated_Part_props)
       .end(function (err, resp) {
         expect(resp.status).to.be.eql(200);
         expect(resp.body.affectedRows).to.be.eql(1);
@@ -147,9 +145,9 @@ describe('Tasks API Service', function () {
       });
   });
 
-  it.skip('should DELETE a single task for a given user', function (done) {
+  it.skip('should DELETE a single part for a given user', function (done) {
     request_user_id = 2;
-    request_task_id = 9;
+    request_part_id = 4;
     const token = generateAccessToken(request_user_id, {
       // {id: 1, iat: wlenfwekl, expiredIn: 9174323 }
       expiresIn: 86400,
@@ -159,7 +157,7 @@ describe('Tasks API Service', function () {
 
     chai
       .request('http://localhost:3000')
-      .delete('/api/tasks/' + request_task_id)
+      .delete('/api/parts/' + request_part_id)
       .set('Authorization', `Bearer ${token}`)
       .end(function (err, resp) {
         expect(resp.status).to.be.eql(200);
