@@ -1,6 +1,7 @@
 const mysql = require('mysql');
 const { CREATE_USERS_TABLE } = require('./queries/user.queries');
 const { CREATE_TASKS_TABLE } = require('./queries/tasks.queries');
+const { CREATE_PARTS_TABLE } = require('./queries/parts.queries');
 const query = require('./utils/query');
 
 // Get the Host from Environment or use default
@@ -52,8 +53,14 @@ const connection = async () =>
     }
   );
   
+  const partsTableCreated = await query(_con, CREATE_PARTS_TABLE).catch(
+    (err) => {
+      console.log(err);
+    }
+  );
+
   //Coerce into a boolean
-  if (!!userTableCreated && !!tasksTableCreated) {
+  if (!!userTableCreated && !!tasksTableCreated && !!partsTableCreated) {
     console.log('Tables Created!');
   }
 })();
