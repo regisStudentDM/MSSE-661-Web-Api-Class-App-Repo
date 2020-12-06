@@ -53,7 +53,7 @@ const connection = async () =>
   );
 
   //Coerce into a boolean
-  if (!!userTableCreated && !!tasksTableCreated && !!partsTableCreated) {
+  if (!!userTableCreated && !!partsTableCreated) {
     console.log('Tables Created!');
   }
 })();
