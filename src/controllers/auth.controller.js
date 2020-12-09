@@ -62,10 +62,6 @@ exports.login = async (req, res) => {
     serverError(res)
   );
 
-  console.log(req.body.password);
-  console.log(user[0].password);
-  console.log(user);
-
   // if the user exists
   if (user.length === 1) {
     //   validate entered password from database saved password
@@ -90,9 +86,6 @@ exports.login = async (req, res) => {
     });
 
     refreshTokens.push(refreshToken);
-    console.log(user);
-    console.log(accessToken);
-    console.log(refreshToken);
     res
       .header('access_token', accessToken) // ex.: { 'auth-token': 'lksnenha0en4tnoaeiwnlgn3o4i'}
       .json({
