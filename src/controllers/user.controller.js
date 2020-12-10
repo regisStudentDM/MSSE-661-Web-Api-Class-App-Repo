@@ -38,6 +38,9 @@ exports.updateMe = async function (req, res) {
     throw err;
   });
 
+  console.log("REACHED LINE 41");
+
+
   // check for existing user first
   const user = await query(con, GET_ME_BY_USER_ID_WITH_PASSWORD(req.user.id)).catch(
     serverError(res)
@@ -49,9 +52,13 @@ exports.updateMe = async function (req, res) {
     .compare(req.body.password, user[0].password)
     .catch((err) => {
       res.json(500).json({ msg: 'Invalid password!' });
+      return;
     });
 
-  if (!passwordUnchanged || req.body.username != user[0].username || req.body.username != user[0].username) {
+    console.log("REACHED LINE 60");
+
+
+  if (!passwordUnchanged || req.body.username != user[0].username || req.body.email != user[0].email) {
     const passwordHash = bcrypt.hashSync(req.body.password);
 
     const username = mysql.escape(req.body.username);
@@ -64,10 +71,13 @@ exports.updateMe = async function (req, res) {
 
     if (result.affectedRows > 0) {
       res.json({ msg: 'Updated succesfully!' });
+      return;
     }
-    res.status(500).json({ msg: 'Could not update user settings.' });
+    res.status(500).json({ msg: 'Could not update user settings. Possible Duplicate Username Conflict' });
+    return;
   }
   else{
-    res.json({ msg: 'Nothing to update...' });
+    res.json({ msg: 'Nothing to update, values same as existing' });
+    return;
   }
 };
