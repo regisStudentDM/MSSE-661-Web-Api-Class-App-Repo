@@ -99,6 +99,7 @@ exports.login = async (req, res) => {
   }
 };
 
+//token currently not used
 exports.token = (req, res) => {
   const refreshToken = req.body.token;
 
