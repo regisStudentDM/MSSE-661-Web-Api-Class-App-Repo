@@ -1,6 +1,5 @@
 const mysql = require('mysql');
 const { CREATE_USERS_TABLE } = require('./queries/user.queries');
-const { CREATE_TASKS_TABLE } = require('./queries/tasks.queries');
 const { CREATE_PARTS_TABLE } = require('./queries/parts.queries');
 const query = require('./utils/query');
 
@@ -46,12 +45,6 @@ const connection = async () =>
       console.log(err);
     }
   );
-
-  const tasksTableCreated = await query(_con, CREATE_TASKS_TABLE).catch(
-    (err) => {
-      console.log(err);
-    }
-  );
   
   const partsTableCreated = await query(_con, CREATE_PARTS_TABLE).catch(
     (err) => {
@@ -60,7 +53,7 @@ const connection = async () =>
   );
 
   //Coerce into a boolean
-  if (!!userTableCreated && !!tasksTableCreated && !!partsTableCreated) {
+  if (!!userTableCreated && !!partsTableCreated) {
     console.log('Tables Created!');
   }
 })();

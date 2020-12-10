@@ -77,11 +77,17 @@ exports.getPartIdByName = async (req, res) => {
     PART_ID_BY_USER_ID_AND_NAME(req.user.id, partName)
   ).catch(serverError(res));
 
-  if (!retrievedID) {
-    res.status(500).json({ msg: 'Could not find part with that name, for this user.' });
-  }
-  else{
-    res.json(retrievedID);
+  if (retrievedID){
+    if (retrievedID.length !== 1){
+      res.status(500).json({ msg: 'Could not find part with that name, for this user.', userid: String(req.user.id), part_name: String(partName)});
+      return;
+    } else {
+      res.json(retrievedID);
+      return;
+    }
+  } else{
+    res.status(500).json({ msg: 'Error in part lookup.' });
+    return;
   }
 };
 
@@ -118,7 +124,8 @@ exports.createPart = async (req, res) => {
           .json({ msg: `Unable to add part: ${req.body.part_name}` });
       }
       else{
-        res.json({ msg: 'Added part successfully!' });
+        res.status(200).json({ msg: 'Added part successfully!' });
+        return;
       }    
     }
   }
@@ -169,7 +176,13 @@ exports.updatePart = async (req, res) => {
         .json({ msg: `Unable to update part: '${req.body.part_name}'` });
         return;
     }
-    res.json(result);  
+    else{
+      res.status(200).json(result);
+      return;
+    }
+  }
+  else{
+    res.status(500).json({ msg: `Unable to update part: '${req.body.part_name}'` });
   }
 
 };
@@ -187,10 +200,18 @@ exports.deletePart = async (req, res) => {
     DELETE_PART(req.user.id, req.params.partId)
   ).catch(serverError(res));
 
-  if (result.affectedRows !== 1) {
-    res
-      .status(500)
-      .json({ msg: `Unable to delete part at: ${req.params.partId}` });
-  }
-  res.json({ msg: 'Deleted successfully.' });
+  if(result){
+    if (result.affectedRows !== 1) {
+      res.status(500).json({ msg: `Unable to delete part at: ${req.params.partId}` });
+      return;
+    }
+    else{
+      res.status(200).json({ msg: 'Deleted successfully.' });
+      return;
+    }
+  } else{
+    res.status(500).json({ msg: `Unable to delete part at: ${req.params.partId}` });
+    return;
+}
+
 };
